@@ -1,0 +1,10 @@
+[
+ {
+   "docId": "I",
+   "docName": "Invoice"
+ },
+ {
+   "docId": "C",
+   "docName": "Credit Note"
+ }
+]
