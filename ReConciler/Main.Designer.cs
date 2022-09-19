@@ -34,6 +34,7 @@ namespace ReConciler
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripBtnLoadStmt = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnConvert = new System.Windows.Forms.ToolStripButton();
+            this.toolStripBtnMerge = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -74,7 +75,8 @@ namespace ReConciler
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripBtnLoadStmt,
-            this.toolStripBtnConvert});
+            this.toolStripBtnConvert,
+            this.toolStripBtnMerge});
             this.toolStrip1.Location = new System.Drawing.Point(12, 70);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1453, 25);
@@ -99,6 +101,16 @@ namespace ReConciler
             this.toolStripBtnConvert.Text = "Convert Statement";
             this.toolStripBtnConvert.Visible = false;
             this.toolStripBtnConvert.Click += new System.EventHandler(this.toolStripBtnConvert_Click);
+            // 
+            // toolStripBtnMerge
+            // 
+            this.toolStripBtnMerge.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnMerge.Image")));
+            this.toolStripBtnMerge.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnMerge.Name = "toolStripBtnMerge";
+            this.toolStripBtnMerge.Size = new System.Drawing.Size(98, 22);
+            this.toolStripBtnMerge.Text = "Merge Sheets";
+            this.toolStripBtnMerge.Visible = false;
+            this.toolStripBtnMerge.Click += new System.EventHandler(this.toolStripBtnMerge_Click);
             // 
             // statusStrip1
             // 
@@ -179,6 +191,7 @@ namespace ReConciler
         public System.Windows.Forms.ToolStripStatusLabel slblStatus;
         private System.Windows.Forms.ToolStripButton toolStripBtnConvert;
         public System.Windows.Forms.PictureBox pbLoader;
+        private System.Windows.Forms.ToolStripButton toolStripBtnMerge;
     }
 }
 

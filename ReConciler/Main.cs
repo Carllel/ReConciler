@@ -14,7 +14,7 @@ namespace ReConciler
 {
     public partial class Main : MetroSetForm
     {
-        frmLoadStatement statement; frmConvertStatement convertStatement;
+        frmLoadStatement statement; frmConvertStatement convertStatement; frmMergeSheets mergeSheets;
         public Main()
         {
             InitializeComponent();
@@ -53,14 +53,24 @@ namespace ReConciler
         private void toolStripBtnConvert_Click(object sender, EventArgs e)
         {
             convertStatement = new frmConvertStatement();
-            convertStatement.FormClosed += Statement_FormClosed1;
+            convertStatement.FormClosed += Statement_FormClosed;
             convertStatement.MdiParent = this;
             convertStatement.Show();
         }
 
-        private void Statement_FormClosed1(object sender, FormClosedEventArgs e)
+
+
+        private void toolStripBtnMerge_Click(object sender, EventArgs e)
         {
-            convertStatement = null;
+            mergeSheets = new frmMergeSheets();
+            mergeSheets.FormClosed += MergeSheets_FormClosed;
+            mergeSheets.MdiParent = this;
+            mergeSheets.Show();
+        }
+
+        private void MergeSheets_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            mergeSheets = null;
         }
     }
 }

@@ -153,4 +153,9 @@ D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\EPPlus.System.Drawing.dll
 D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Microsoft.IO.RecyclableMemoryStream.dll
 D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\EPPlus.xml
 D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Microsoft.IO.RecyclableMemoryStream.xml
-D:\DEVELOPMENT\ReConciler\ReConciler\obj\Debug\ReConciler.frmProducts.resources
+D:\DEVELOPMENT\ReConciler\ReConciler\obj\Debug\ReConciler.frmMergeSheets.resources
+D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Spire.Pdf.dll
+D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Spire.XLS.dll
+D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Microsoft.mshtml.dll
+D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Spire.Pdf.xml
+D:\DEVELOPMENT\ReConciler\ReConciler\bin\Debug\Spire.XLS.xml

@@ -16,7 +16,7 @@ namespace ReConciler
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmProducts());
+            Application.Run(new Main());
         }
     }
 }

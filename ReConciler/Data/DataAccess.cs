@@ -602,6 +602,36 @@ namespace ReConciler.Data
             }
         }
 
+        public static List<vendorSTMT> GetSTMTEntriesKIRKDISTRIBUTORS(string vendor, string fpath)
+        {
+            try
+            {
+                List<vendorSTMT> sTMTs = new List<vendorSTMT>();
+
+                var excel = new ExcelQueryFactory(fpath);
+                excel.ReadOnly = true;
+                var lstEntries = from c in excel.WorksheetNoHeader(vendor)
+                                 where c[0] != "" && c[0] != "Document Type"
+                                 select c;
+
+                foreach (var a in lstEntries)
+                {
+                    string amt = a[8].Value.ToString().Replace("(", "-").Replace(")", "");
+                    amt = amt.Length == 0 ? "0.00" : amt.Trim();
+                    string docdte = a[4];
+
+                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[3], DocumentDate = a[4], DocumentType = a[0], Amount = amt });
+                }
+
+                return sTMTs;
+
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
         public static List<product> GetProductList(string fpath)
         {
             List<product> products = new List<product>();

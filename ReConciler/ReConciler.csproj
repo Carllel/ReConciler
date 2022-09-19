@@ -119,6 +119,12 @@
     <Reference Include="Remotion.Interfaces, Version=1.13.52.2, Culture=neutral, PublicKeyToken=0669cf0452175907, processorArchitecture=MSIL">
       <HintPath>..\packages\LinqToExcel.1.11.0\lib\Remotion.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Spire.Pdf, Version=8.7.2.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.XLS, Version=12.7.0.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.XLS.12.7.0\lib\net40\Spire.XLS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -207,11 +213,11 @@
     <Compile Include="frmLoadStatement.Designer.cs">
       <DependentUpon>frmLoadStatement.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmProducts.cs">
+    <Compile Include="frmMergeSheets.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmProducts.Designer.cs">
-      <DependentUpon>frmProducts.cs</DependentUpon>
+    <Compile Include="frmMergeSheets.Designer.cs">
+      <DependentUpon>frmMergeSheets.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -245,8 +251,8 @@
     <EmbeddedResource Include="frmLoadStatement.resx">
       <DependentUpon>frmLoadStatement.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmProducts.resx">
-      <DependentUpon>frmProducts.cs</DependentUpon>
+    <EmbeddedResource Include="frmMergeSheets.resx">
+      <DependentUpon>frmMergeSheets.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
