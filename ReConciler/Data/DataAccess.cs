@@ -1,12 +1,10 @@
 ﻿
 using LinqToExcel;
 using ReConciler.Model;
-using ReConciler.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ReConciler.Data
 {
@@ -355,26 +353,27 @@ namespace ReConciler.Data
                 return null;
             }
         }
-        public static List<vendorStatement> GetSTMTEntriesCarimed(string vendor, string fpath)
+        public static List<vendorSTMT> GetSTMTEntriesCarimed(string vendor, string fpath)
         {
             try
             {
-                List<vendorStatement> sTMTs = new List<vendorStatement>();
+                List<vendorSTMT> sTMTs = new List<vendorSTMT>();
 
                 var excel = new ExcelQueryFactory(fpath);
                 excel.ReadOnly = true;
                 var lstEntries = from c in excel.WorksheetNoHeader(vendor)
-                                 where c[5] != "" && c[5] != "Original Trx Amount"
+                                     where c[5] != "" && c[5] != "Original Trx Amount"
+                                 //where c[6] != "" && c[6] != "Current Trx Amount"
                                  select c;
 
                 foreach (var a in lstEntries)
                 {
-                    string amt = a[5].Value.ToString();
-                    string bal = a[6].Value.ToString();
+                    string amt = a[6].Value.ToString();
+                    //string bal = a[6].Value.ToString();
                     amt = amt.Length == 0 ? "0.00" : amt.Trim();
-                    bal = bal.Length == 0 ? "0.00" : bal.Trim();
+                    //bal = bal.Length == 0 ? "0.00" : bal.Trim();
                     //var docdate = DateTime.FromOADate(Convert.ToDouble(a[4].Value)); docdate.ToString("dd/MM/yyyy")
-                    sTMTs.Add(new vendorStatement() { ReferenceNo = a[0], DocumentDate = a[4], DocumentType = a[3], Amount = amt, Balance = bal });
+                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[0], DocumentDate = a[4], DocumentType = a[3], Amount = amt, Location = a[1] });
                 }
 
                 return sTMTs;
@@ -435,7 +434,7 @@ namespace ReConciler.Data
                     string amt = a[6].Value.ToString();
                     amt = amt.Length == 0 ? "0.00" : amt.Trim();
                     //var docdate = DateTime.FromOADate(Convert.ToDouble(a[0].Value)); docdate.ToString("dd/MM/yyyy")
-                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[2], DocumentDate = a[0], DocumentType = a[1], Amount = amt });
+                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[2], DocumentDate = a[0], DocumentType = a[1], Amount = amt, Location= a[7] });
                 }
 
                 return sTMTs;
@@ -443,7 +442,7 @@ namespace ReConciler.Data
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
         }
@@ -535,6 +534,7 @@ namespace ReConciler.Data
             }
             catch (Exception ex)
             {
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return null;
             }
@@ -566,7 +566,7 @@ namespace ReConciler.Data
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
         }
@@ -597,11 +597,10 @@ namespace ReConciler.Data
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
         }
-
         public static List<vendorSTMT> GetSTMTEntriesKIRKDISTRIBUTORS(string vendor, string fpath)
         {
             try
@@ -620,7 +619,71 @@ namespace ReConciler.Data
                     amt = amt.Length == 0 ? "0.00" : amt.Trim();
                     string docdte = a[4];
 
-                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[3], DocumentDate = a[4], DocumentType = a[0], Amount = amt });
+                    sTMTs.Add(new vendorSTMT() { ReferenceNo = a[3], DocumentDate = a[4], DocumentType = a[0], Amount = amt, Location = a[2] });
+                }
+
+                return sTMTs;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+        public static List<vendorSTMTv2> GetSTMTEntriesLASCO(string vendor, string fpath)
+        {
+            try
+            {
+                List<vendorSTMTv2> sTMTs = new List<vendorSTMTv2>();
+
+                var excel = new ExcelQueryFactory(fpath);
+                excel.ReadOnly = true;
+                var lstEntries = from c in excel.WorksheetNoHeader(vendor)
+                                 where c[2] == "INV" || c[2] == "CM" || c[2] == "DM" || c[2] == "PMT" || c[2] == "ADJ" || c[2] == "FIN"//where 2 is the column index of the worksheet
+                                 select c;
+
+                foreach (var a in lstEntries)
+                {
+                    string drAmt = a[5].Value.ToString().Length == 0 ? "0.00" : a[5].Value.ToString();
+                    string crAmt = a[6].Value.ToString().Length == 0 ? "0.00" : a[6].Value.ToString();
+                    string bal = a[7].Value.ToString().Length == 0 ? "0.00" : a[7].Value.ToString();
+
+                    //var docdate = DateTime.FromOADate(Convert.ToDouble(a[2].Value));docdate.ToString("dd/MM/yyyy")
+                    sTMTs.Add(new vendorSTMTv2() { ReferenceNo = a[1], Date = a[0], DocType = a[2], Debit = drAmt, Credit = crAmt, Balance = bal });
+                }
+
+                return sTMTs;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "An error has occurred", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+        public static List<vendorSTMT> GetSTMTEntriesJAMBISCO(string vendor, string fpath)
+        {
+            try
+            {
+                List<vendorSTMT> sTMTs = new List<vendorSTMT>();
+
+                var excel = new ExcelQueryFactory(fpath);
+                excel.ReadOnly = true;
+                var lstEntries = from c in excel.WorksheetNoHeader(vendor)
+                                 where c[3] != "" 
+                                 select c;
+
+                foreach (var a in lstEntries)
+                {
+                    if (a[3].Value.ToString().Contains("JBC"))
+                    {
+                        string amt = a[6].Value.ToString();
+                        amt = amt.Length == 0 ? "0.00" : amt.Trim();
+                        //var docdate = DateTime.FromOADate(Convert.ToDouble(a[4].Value)); docdate.ToString("dd/MM/yyyy")
+                        sTMTs.Add(new vendorSTMT() { ReferenceNo = a[3], DocumentDate = a[2], DocumentType = "", Amount = amt, Location = "" });
+                        
+                    }
                 }
 
                 return sTMTs;
@@ -632,29 +695,7 @@ namespace ReConciler.Data
                 return null;
             }
         }
-        public static List<product> GetProductList(string fpath)
-        {
-            List<product> products = new List<product>();
-            var excel = new ExcelQueryFactory(fpath);
-            excel.ReadOnly = true;
 
-            var lstEntries = (from p in excel.WorksheetNoHeader("Sheet1")
-                              where p[1] != "" && p[1] != "Description"
-                              select p).ToList();
-
-
-            foreach(var entry in lstEntries)
-            {
-                string newpv = entry[6] == "-" ? "0.00" : entry[6];
-                string newbv = entry[7] == "-" ? "0.00" : entry[7];
-                string newibo = entry[8] == "-" ? "0.00" : entry[8];
-                string newrtval = entry[9] == "-" ? "0.00" : entry[9];
-                products.Add(new product() { productId = entry[0], description = entry[1], pv = newpv, bv = newbv, ibovalue = newibo, retailvalue = newrtval });
-            }
-
-            return products;
-
-        }
 
         #endregion
 

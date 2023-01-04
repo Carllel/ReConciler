@@ -32,11 +32,9 @@ namespace ReConciler
             {
                 foreach(var column in dataGrid.Columns)
                 {
-                   
                     var name = dataGrid.Columns[colindex].HeaderText;
                     columnHeaderNames.Add(name);
                     colindex++;
-
                 }
             }
             catch(Exception ex)
@@ -47,6 +45,7 @@ namespace ReConciler
 
             return columnHeaderNames;
         }
+
         public string vendor = "";
 
         #region VALIDATE VENDOR STATEMENT
@@ -95,6 +94,12 @@ namespace ReConciler
                         break;
                     case "FACEY":
                         await ValidateSTMTEntriesFACEY(progress, SAPMasterData);
+                        break;
+                    case "LASCO":
+                        await ValidateSTMTEntriesLASCO(progress, SAPMasterData);
+                        break;
+                    case "CARIMED":
+                        await ValidateSTMTEntriesCARIMED(progress, SAPMasterData);
                         break;
                     default:
                         break;
@@ -178,7 +183,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -254,7 +259,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -328,7 +333,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -404,7 +409,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -458,7 +463,7 @@ namespace ReConciler
                                     row.Cells[dgSTSMEntries.Columns[2].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
                                     row.Cells[dgSTSMEntries.Columns[3].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
                                     row.Cells[dgSTSMEntries.Columns[4].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
-                                    //row.Cells[dgSTSMEntries.Columns[5].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[5].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
                                     cntMatch += 1;
                                 }
                             }
@@ -481,7 +486,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -535,6 +540,7 @@ namespace ReConciler
                                     row.Cells[dgSTSMEntries.Columns[2].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
                                     row.Cells[dgSTSMEntries.Columns[3].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
                                     row.Cells[dgSTSMEntries.Columns[4].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[5].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
 
                                     cntMatch += 1;
                                 }
@@ -558,7 +564,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -636,7 +642,7 @@ namespace ReConciler
                         progressReport.TotalNotMatched = cntNotMatch;
 
                         progress.Report(progressReport);
-                        //Thread.Sleep(100);
+                        Thread.Sleep(10);
                     });
 
                 });
@@ -827,6 +833,168 @@ namespace ReConciler
         }
         #endregion
 
+        #region LASCO
+
+        private Task ValidateSTMTEntriesLASCO(IProgress<ProgressReport> progress, List<SAPMaster> SAPMasterData)
+        {
+            int cntMatch = 0, cntNotMatch = 0, cnt = 1, totalProcess = dgSTSMEntries.Rows.Count;
+            var progressReport = new ProgressReport();
+
+            dgSTSMEntries.ClearSelection();
+
+            var lstStmtEntries = dgSTSMEntries.DataSource as List<vendorSTMTv2>;
+            var SummlstStmtEntries = lstStmtEntries
+                                    .GroupBy(l => l.ReferenceNo)
+                                    .Select(cl => new validateVendorSTMTv2
+                                    {
+                                        RefNo = cl.Last().ReferenceNo,
+                                        DocType=cl.First().DocType,
+                                        DocDate = cl.Last().Date,
+                                        DebitTotal = cl.Sum(c => Convert.ToDecimal(c.Debit)).ToString(),
+                                        CreditTotal = cl.Sum(c => Convert.ToDecimal(c.Credit)).ToString(),
+                                        BalTotal = cl.Sum(c => Convert.ToDecimal(c.Balance)).ToString()
+                                    }).ToList();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    SummlstStmtEntries.ForEach(r => {
+                        progressReport.PercentageComplete = cnt++ * 100 / SummlstStmtEntries.Count();
+
+                        var debitAmt = r.DebitTotal;//.Split('.')[0].Replace("-", "").Replace(",", "");
+                        var creditAmt = r.CreditTotal;//.Split('.')[0].Replace("-", "").Replace(",", "");
+                        var bal = r.BalTotal.Split('.')[0].Replace("-", "").Replace(",", ""); 
+
+                        if (SAPMasterData.Any(s => s.Reference.Trim().StartsWith(r.RefNo.Trim()) &&
+                                            s.Amount.ToString().Trim().Replace("-", "").Replace(",", "").StartsWith(bal) ))
+                        {
+                            foreach (DataGridViewRow row in dgSTSMEntries.Rows)
+                            {
+                                if (row.Cells[1].Value.ToString().Equals(r.RefNo))
+                                {
+                                    row.Cells["chbIsMatch"].Value = CheckState.Checked;
+                                    row.Cells["chbIsMatch"].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[1].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[2].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[3].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[4].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[5].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[6].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    cntMatch += 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (DataGridViewRow row in dgSTSMEntries.Rows)
+                            {
+                                if (row.Cells[1].Value.ToString().Equals(r.RefNo))
+                                {
+                                    row.Cells["chbIsMatch"].Value = CheckState.Unchecked;
+                                    row.Cells["chbIsMatch"].Style.BackColor = System.Drawing.Color.MistyRose;
+                                    cntNotMatch += 1;
+                                }
+                            }
+                        }
+
+                        progressReport.TotalRecords = dgSTSMEntries.Rows.Count;
+                        progressReport.TotalMatched = cntMatch;
+                        progressReport.TotalNotMatched = cntNotMatch;
+
+                        progress.Report(progressReport);
+                        Thread.Sleep(10);
+                    });
+
+                });
+            }
+            catch (ThreadInterruptedException e)
+            {
+                MetroSetMessageBox.Show(this, $"{e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(e.Message);
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region CARIMED
+
+        private Task ValidateSTMTEntriesCARIMED(IProgress<ProgressReport> progress, List<SAPMaster> SAPMasterData)
+        {
+            int cntMatch = 0, cntNotMatch = 0, cnt = 1, totalProcess = dgSTSMEntries.Rows.Count;
+            var progressReport = new ProgressReport();
+
+            dgSTSMEntries.ClearSelection();
+
+            var lstStmtEntries = dgSTSMEntries.DataSource as List<vendorSTMT>;
+            var SummlstStmtEntries = lstStmtEntries
+                                    .GroupBy(l => l.ReferenceNo)
+                                    .Select(cl => new validateVendorSTMT
+                                    {
+                                        RefNo = cl.Last().ReferenceNo,
+                                        DocDate = cl.Last().DocumentDate,
+                                        Amt = cl.Sum(c => Convert.ToDecimal(c.Amount)).ToString(),
+                                    }).ToList();
+
+            try
+            {
+                return Task.Run(() =>
+                {
+                    SummlstStmtEntries.ForEach(r => {
+                        progressReport.PercentageComplete = cnt++ * 100 / SummlstStmtEntries.Count();
+
+                        if (SAPMasterData.Any(s => s.Reference.Trim().Contains(r.RefNo.Trim().Substring(r.RefNo.Trim().Length - 5)) &&
+                                       s.Amount.ToString().Trim().Replace("-", "").Replace(",", "").StartsWith(r.Amt.Split('.')[0].Replace("-", "").Replace(",", ""))))
+                        {
+                            foreach (DataGridViewRow row in dgSTSMEntries.Rows)
+                            {
+                                if (row.Cells[1].Value.ToString().Equals(r.RefNo))
+                                {
+                                    row.Cells["chbIsMatch"].Value = CheckState.Checked;
+                                    row.Cells["chbIsMatch"].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[1].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[2].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[3].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[4].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    row.Cells[dgSTSMEntries.Columns[5].HeaderText].Style.BackColor = System.Drawing.Color.LightGreen;
+                                    cntMatch += 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (DataGridViewRow row in dgSTSMEntries.Rows)
+                            {
+                                if (row.Cells[1].Value.ToString().Equals(r.RefNo))
+                                {
+                                    row.Cells["chbIsMatch"].Value = CheckState.Unchecked;
+                                    row.Cells["chbIsMatch"].Style.BackColor = System.Drawing.Color.MistyRose;
+                                    cntNotMatch += 1;
+                                }
+                            }
+                        }
+
+                        progressReport.TotalRecords = dgSTSMEntries.Rows.Count;
+                        progressReport.TotalMatched = cntMatch;
+                        progressReport.TotalNotMatched = cntNotMatch;
+
+                        progress.Report(progressReport);
+                        Thread.Sleep(10);
+                    });
+
+                });
+            }
+            catch (ThreadInterruptedException e)
+            {
+                MetroSetMessageBox.Show(this, $"{e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(e.Message);
+                return null;
+            }
+        }
+
+        #endregion
+        
         #endregion
 
         #region GENERATE REPORTS
@@ -896,7 +1064,6 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void GenerateReportTGEDDES(string vendor)
         {          
             //List<string> headerNames = new List<string> { "Transaction Reference", "Document Date", "Document Type", "Amount", "Balance" };
@@ -1028,7 +1195,6 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void GenerateReportDERRIMON(string vendor)
         {
             var headerNames = GetColumnHeaderNames(dgSTSMEntries);
@@ -1063,7 +1229,7 @@ namespace ReConciler
                         {
                             //Write details
                             #region WRITE DETAILS
-                            var isDetailsWritten = UtilManager.WriteReportDetailsV1(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
                             #endregion
                         }
                     }
@@ -1076,7 +1242,7 @@ namespace ReConciler
                         {
                             //Write details
                             #region WRITE DETAILS
-                            var isDetailsWritten = UtilManager.WriteReportDetailsV1(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
                             #endregion
                         }
                     }
@@ -1094,7 +1260,6 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void GenerateReportCONSOLBAKERIES(string vendor)
         {
             var headerNames = GetColumnHeaderNames(dgSTSMEntries);
@@ -1160,7 +1325,6 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void GenerateReportMASSY(string vendor)
         {
             var headerNames = GetColumnHeaderNames(dgSTSMEntries);
@@ -1226,7 +1390,6 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         public void GenerateReportKIRK(string vendor)
         {
             var headerNames = GetColumnHeaderNames(dgSTSMEntries);
@@ -1261,7 +1424,7 @@ namespace ReConciler
                         {
                             //Write details
                             #region WRITE DETAILS
-                            var isDetailsWritten = UtilManager.WriteReportDetailsV1(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
                             #endregion
                         }
                     }
@@ -1274,7 +1437,7 @@ namespace ReConciler
                         {
                             //Write details
                             #region WRITE DETAILS
-                            var isDetailsWritten = UtilManager.WriteReportDetailsV1(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
                             #endregion
                         }
                     }
@@ -1292,6 +1455,139 @@ namespace ReConciler
                 MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        public void GenerateReportLASCO(string vendor)
+        {
+            var headerNames = GetColumnHeaderNames(dgSTSMEntries);
+
+            try
+            {
+
+                string reportsDIR = Path.GetDirectoryName(txtStmtFileLoc.Text.Trim()) + $@"\REPORTS\{vendor}";
+                //Create directoy if doesn't exist
+                if (!Directory.Exists(reportsDIR))
+                    Directory.CreateDirectory(reportsDIR);
+
+
+                //Define Sheet Names
+                string shtnameNOTMATCHED = "NOTMATCHED";
+                string shtnameMATCHED = "MATCHED";
+
+                string reportFileNme = reportsDIR + $@"\RPT_VAL_RESULTS_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+
+                //create workbook
+                var isCreated = UtilManager.CreateReportsWorkbook(reportFileNme, shtnameNOTMATCHED, shtnameMATCHED);
+
+                if (isCreated)
+                {
+                    #region WRITE REPORTS
+                    //NOT MATCHED
+                    if (msBadgeTotalNotMatch.BadgeText != "0")
+                    {
+                        ////Report Header
+                        var ishdrCreated = UtilManager.WriteReportHeaderData(shtnameNOTMATCHED, reportFileNme, "LASCO DISTRIBUTORS LTD", "B", "2", headerNames, 3);
+                        if (ishdrCreated)
+                        {
+                            //Write details
+                            #region WRITE DETAILS
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV3(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
+                            #endregion
+                        }
+                    }
+                    //MATCHED
+                    if (msBadgeTotalMatch.BadgeText != "0")
+                    {
+                        ////Report Header
+                        var ishdrCreated = UtilManager.WriteReportHeaderData(shtnameMATCHED, reportFileNme, "LASCO DISTRIBUTORS LTD", "B", "2", headerNames, 3);
+                        if (ishdrCreated)
+                        {
+                            //Write details
+                            #region WRITE DETAILS
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV3(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
+                            #endregion
+                        }
+                    }
+                    #endregion
+
+                    MetroSetMessageBox.Show(this, "Reports Generated Successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MetroSetMessageBox.Show(this, "Unable to generate report.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public void GenerateReportCARIMED(string vendor)
+        {
+            var headerNames = GetColumnHeaderNames(dgSTSMEntries);
+
+            try
+            {
+
+                string reportsDIR = Path.GetDirectoryName(txtStmtFileLoc.Text.Trim()) + $@"\REPORTS\{vendor}";
+                //Create directoy if doesn't exist
+                if (!Directory.Exists(reportsDIR))
+                    Directory.CreateDirectory(reportsDIR);
+
+
+                //Define Sheet Names
+                string shtnameNOTMATCHED = "NOTMATCHED";
+                string shtnameMATCHED = "MATCHED";
+
+                string reportFileNme = reportsDIR + $@"\RPT_VAL_RESULTS_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+
+                //create workbook
+                var isCreated = UtilManager.CreateReportsWorkbook(reportFileNme, shtnameNOTMATCHED, shtnameMATCHED);
+
+                if (isCreated)
+                {
+                    #region WRITE REPORTS
+                    //NOT MATCHED
+                    if (msBadgeTotalNotMatch.BadgeText != "0")
+                    {
+                        ////Report Header
+                        var ishdrCreated = UtilManager.WriteReportHeaderData(shtnameNOTMATCHED, reportFileNme, "CARI-MED LTD.", "B", "2", headerNames, 3);
+                        if (ishdrCreated)
+                        {
+                            //Write details
+                            #region WRITE DETAILS
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameNOTMATCHED, reportFileNme, 4, dgSTSMEntries, false);
+                            #endregion
+                        }
+                    }
+                    //MATCHED
+                    if (msBadgeTotalMatch.BadgeText != "0")
+                    {
+                        ////Report Header
+                        var ishdrCreated = UtilManager.WriteReportHeaderData(shtnameMATCHED, reportFileNme, "CARI-MED LTD.", "B", "2", headerNames, 3);
+                        if (ishdrCreated)
+                        {
+                            //Write details
+                            #region WRITE DETAILS
+                            var isDetailsWritten = UtilManager.WriteReportDetailsV4(shtnameMATCHED, reportFileNme, 4, dgSTSMEntries, true);
+                            #endregion
+                        }
+                    }
+                    #endregion
+
+                    MetroSetMessageBox.Show(this, "Reports Generated Successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MetroSetMessageBox.Show(this, "Unable to generate report.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
 
 
         public void GenerateNotMatchReportWISYNCO()
@@ -1395,7 +1691,9 @@ namespace ReConciler
 
         public void LoadVendorDropDownList()
         {
-            var jsonFIleFUllPath = AppDomain.CurrentDomain.BaseDirectory + @"\Vendors.json";
+            //public static string jsonEndPointFile = Environment.ExpandEnvironmentVariables(@"%AppData%\SMSToSAP\endpointdata.json");
+            var jsonFIleFUllPath = Environment.ExpandEnvironmentVariables(@"%AppData%\ReConciler\Vendors.json");
+            //var jsonFIleFUllPath = AppDomain.CurrentDomain.BaseDirectory + @"\Vendors.json";
             var vendorLst = UtilManager.GetVendors(jsonFIleFUllPath);
             var lstVendors = vendorLst.OrderBy(v => v.Name).ToList();
 
@@ -1833,24 +2131,15 @@ namespace ReConciler
                     if (carimedEntries != null)
                     {
                         var totalAmt = carimedEntries.Sum(t => Convert.ToDecimal(t.Amount));
-                        var totalBal = carimedEntries.Sum(t => Convert.ToDecimal(t.Balance));
 
-                        lblOutstandingAmt.Text = String.Format("{0:C}", totalBal);
-                        lblOriginalAmt.Text = String.Format("{0:C}", totalAmt);
+                        lblOutstandingAmt.Text = String.Format("{0:C}", totalAmt);
 
                         lblOriginalAmt.Visible = false;
                         lblOriginalAmt2.Visible = false;
 
-                        lblOriginalAmt.Visible = true;
+                        lblOutstandingAmt.Visible = true;
                         lblOriginalAmt2.Text = "Total Amount:-";
                         lblOriginalAmt2.Visible = true;
-
-                        lblOutstandingAmt.Visible = false;
-                        lblOutstandingAmt2.Visible = false;
-
-                        lblOutstandingAmt.Visible = true;
-                        lblOutstandingAmt2.Text = "Total Balance:-";
-                        lblOutstandingAmt2.Visible = true;
 
                         btnValidate.Visible = true;
                         gbValResults.Visible = true;
@@ -2176,7 +2465,78 @@ namespace ReConciler
                         MetroSetMessageBox.Show(this, $"No data found for {cboVendors.Text}!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
+                else if (vendor.ToUpper() == "LASCO")
+                {
+                    var lascoEntries = DataAccess.GetSTMTEntriesLASCO(vendor.ToUpper(), txtStmtFileLoc.Text.Trim());
+                    dgSTSMEntries.DataSource = null;
+                    dgSTSMEntries.DataSource = lascoEntries;
 
+                    if (lascoEntries != null)
+                    {
+                        var totalCreditAmt = lascoEntries.Sum(t => Convert.ToDecimal(t.Credit));
+                        var totalDebitAmt = lascoEntries.Sum(t => Convert.ToDecimal(t.Debit));
+                        var totalBalance = lascoEntries.Sum(t => Convert.ToDecimal(t.Balance));
+
+                        lblOriginalAmt.Text = String.Format("{0:C}", totalCreditAmt);
+                        lblTotalAmount.Text = String.Format("{0:C}", totalDebitAmt);
+                        lblOutstandingAmt.Text = String.Format("{0:C}", totalBalance);
+
+                        lblTotalAmount.Visible = true;
+                        lblTotalAmount2.Text = "Total Debit:-";
+                        lblTotalAmount2.Visible = true;
+
+                        lblOriginalAmt.Visible = true;
+                        lblOriginalAmt2.Text = "Total Credit:-";
+                        lblOriginalAmt2.Visible = true;
+
+                        lblOutstandingAmt.Visible = true;
+                        lblOutstandingAmt2.Text = "Total Balance:-";
+                        lblOutstandingAmt2.Visible = true;
+
+                        panelDataSummaryMassy.Visible = true;
+                        btnValidate.Visible = true;
+                        gbValResults.Visible = true;
+                        dgSTSMEntries.Visible = true;
+                        (Application.OpenForms["Main"] as Main).slblStatus.Text = "Template Loaded Successfully!";
+                    }
+                    else
+                    {
+                        btnValidate.Visible = false;
+                        gbValResults.Visible = false;
+                        MetroSetMessageBox.Show(this, $"No data found for {cboVendors.Text}!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else if (vendor.ToUpper() == "JAMBISCO")
+                {
+                    var jbcEntries = DataAccess.GetSTMTEntriesJAMBISCO(vendor.ToUpper(), txtStmtFileLoc.Text.Trim());
+                    dgSTSMEntries.DataSource = null;
+                    dgSTSMEntries.DataSource = jbcEntries;
+                    if (jbcEntries != null)
+                    {
+                        var totalAmt = jbcEntries.Sum(t => Convert.ToDecimal(t.Amount));
+
+                        lblOutstandingAmt.Text = String.Format("{0:C}", totalAmt);
+
+                        lblOriginalAmt.Visible = false;
+                        lblOriginalAmt2.Visible = false;
+
+                        lblOutstandingAmt.Visible = true;
+                        lblOriginalAmt2.Text = "Total Amount:-";
+                        lblOriginalAmt2.Visible = true;
+
+                        btnValidate.Visible = true;
+                        gbValResults.Visible = true;
+                        panelDataSummaryMassy.Visible = true;
+                        dgSTSMEntries.Visible = true;
+                        (Application.OpenForms["Main"] as Main).slblStatus.Text = "Template Loaded Successfully!";
+                    }
+                    else
+                    {
+                        btnValidate.Visible = false;
+                        gbValResults.Visible = false;
+                        MetroSetMessageBox.Show(this, $"No data found for {cboVendors.Text}!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
                 else
                 {
                     dgSTSMEntries.DataSource = null;
@@ -2206,114 +2566,17 @@ namespace ReConciler
             vendor = "";
             vendor = cboVendors.SelectedValue.ToString().Trim().ToUpper();
             try
-            {             
-                if (vendor == "MASSY")
+            {
+                var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+                if (sapmaster.Count() != 0)
                 {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster,vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                   
+                    ValidateStatement(sapmaster, vendor);
                 }
-                else if (vendor == "DERRIMON")
+                else
                 {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
+                    MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                else if (vendor == "KIRK")
-                {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
-                }
-                else if (vendor == "CONSOLBAKERIES")
-                {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else if (vendor == "COPPERWOOD")
-                {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else if (vendor == "TGEDDES")
-                {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else if (vendor == "FACEY")
-                {
-                    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
-
-                    if (sapmaster.Count() != 0)
-                    {
-                        ValidateStatement(sapmaster, vendor);
-                    }
-                    else
-                    {
-                        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else if (vendor == "WISYNCO")
-                {
-                    //var sapmaster = DataAccess.GetSAPMasterData($"{vendor.ToUpper()}_SAPMASTER",txtStmtFileLoc.Text.Trim());
-                    //if(sapmaster != null)
-                    //{
-                    //    ValidateWISYNCO(sapmaster);
-                    //}
-                    //else
-                    //{
-                    //    MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor.ToUpper()}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //}
-                }
-                else { }
             }
             catch (Exception ex)
             {
@@ -2340,8 +2603,10 @@ namespace ReConciler
                 GenerateReportFACEY(vendor);
             else if (vendor.ToUpper() == "KIRK")
                 GenerateReportKIRK(vendor);
-            //else if (vendor.ToUpper() == "WISYNCO")
-            //    GenerateNotMatchReportWISYNCO();
+            else if (vendor.ToUpper() == "LASCO")
+                GenerateReportLASCO(vendor);
+            else if (vendor.ToUpper() == "CARIMED")
+                GenerateReportCARIMED(vendor);
 
             (Application.OpenForms["Main"] as Main).slblStatus.Text = "Generate Reports Complete!";
         }
@@ -2921,3 +3186,111 @@ namespace ReConciler
 //        MetroSetMessageBox.Show(this, $"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 //    }
 //}
+
+//if (vendor == "MASSY")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+
+//}
+//else if (vendor == "DERRIMON")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+
+//}
+//else if (vendor == "KIRK")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_SAPMASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+
+//}
+//else if (vendor == "CONSOLBAKERIES")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+//}
+//else if (vendor == "COPPERWOOD")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+//}
+//else if (vendor == "TGEDDES")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+//}
+//else if (vendor == "FACEY")
+//{
+//    var sapmaster = DataAccess.GetSAPMasterData($"{vendor}_SAPMASTER", txtStmtFileLoc.Text.Trim());
+
+//    if (sapmaster.Count() != 0)
+//    {
+//        ValidateStatement(sapmaster, vendor);
+//    }
+//    else
+//    {
+//        MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    }
+//}
+//else if (vendor == "WISYNCO")
+//{
+//    //var sapmaster = DataAccess.GetSAPMasterData($"{vendor.ToUpper()}_SAPMASTER",txtStmtFileLoc.Text.Trim());
+//    //if(sapmaster != null)
+//    //{
+//    //    ValidateWISYNCO(sapmaster);
+//    //}
+//    //else
+//    //{
+//    //    MetroSetMessageBox.Show(this, $"No SAP data found in sheet name '{vendor.ToUpper()}_MASTER'!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+//    //}
+//}
+//else { }

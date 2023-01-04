@@ -467,6 +467,151 @@ namespace ReConciler.Util
             return success;
         }
 
+        public static bool WriteReportDetailsV3(string sheetname, string fpath, int startrow, DataGridView dataGrid, bool ismatched)
+        {
+            bool success = false;
+            decimal totCRAmt = 0, totDBAmt = 0, totBal = 0;
+            int lrow = 0, lrow2 = 0;
+            XLWorkbook workbook = new XLWorkbook(fpath);
+
+            IXLWorksheet ws = workbook.Worksheet(sheetname);
+
+            try
+            {
+                #region WRITE DETAILS
+                foreach (DataGridViewRow r in dataGrid.Rows)
+                {
+                    //Look for unmatched statements
+                    if (Convert.ToBoolean(r.Cells["chbIsMatch"].Value) == ismatched)
+                    {
+                        //Write data to column B
+                        //ws.Cell($"B{startrow}").Value = r.Cells["ReferenceNo"].Value.ToString();
+                        ws.Cell($"B{startrow}").Value = r.Cells[dataGrid.Columns[1].HeaderText].Value.ToString();
+                        //Write data to column C
+                        ws.Cell($"C{startrow}").Value = r.Cells[dataGrid.Columns[2].HeaderText].Value.ToString();
+                        //Write data to column D
+                        ws.Cell($"D{startrow}").Value = r.Cells[dataGrid.Columns[3].HeaderText].Value.ToString();
+                        //Write data to column E
+                        ws.Cell($"E{startrow}").Value = r.Cells[dataGrid.Columns[4].HeaderText].Value.ToString().Replace(",", "");
+                        ws.Cell($"E{startrow}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                        totDBAmt = totDBAmt + Convert.ToDecimal(r.Cells[dataGrid.Columns[4].HeaderText].Value.ToString().Replace(",", ""));
+                        //Write data to column F
+                        ws.Cell($"F{startrow}").Value = r.Cells[dataGrid.Columns[5].HeaderText].Value.ToString().Replace(",", "");
+                        ws.Cell($"F{startrow}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                        totCRAmt = totCRAmt + Convert.ToDecimal(r.Cells[dataGrid.Columns[5].HeaderText].Value.ToString().Replace(",", ""));
+                        //Write data to column F
+                        ws.Cell($"G{startrow}").Value = r.Cells[dataGrid.Columns[6].HeaderText].Value.ToString().Replace(",", "");
+                        ws.Cell($"G{startrow}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                        totBal = totBal + Convert.ToDecimal(r.Cells[dataGrid.Columns[6].HeaderText].Value.ToString().Replace(",", ""));
+
+                        startrow += 1;
+                    }
+                }
+                #endregion
+
+                #region STYLE REPORT
+                //Styling
+                lrow = ws.LastRowUsed().RowNumber();
+                ws.Cell($"E{lrow + 1}").Value = totDBAmt.ToString();
+                ws.Cell($"E{lrow + 1}").Style.Font.Bold = true;
+                ws.Cell($"E{lrow + 1}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                ws.Cell($"F{lrow + 1}").Value = totCRAmt.ToString();
+                ws.Cell($"F{lrow + 1}").Style.Font.Bold = true;
+                ws.Cell($"F{lrow + 1}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                ws.Cell($"G{lrow + 1}").Value = totBal.ToString();
+                ws.Cell($"G{lrow + 1}").Style.Font.Bold = true;
+                ws.Cell($"G{lrow + 1}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+
+                int newRow = lrow + 1;
+                ws.Range($"B{newRow}:F{newRow}").Style.Border.TopBorder = XLBorderStyleValues.Thin;
+
+                lrow2 = ws.LastRowUsed().RowNumber();
+
+                IXLRange range = ws.Range(ws.Cell($"B{startrow}").Address, ws.Cell($"G{lrow2}").Address);
+
+                range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                ws.Columns().AdjustToContents();
+                #endregion
+
+                workbook.SaveAs(fpath);
+                success = true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return success;
+        }
+
+        //WITH LOCATION 
+        public static bool WriteReportDetailsV4(string sheetname, string fpath, int startrow, DataGridView dataGrid, bool ismatched)
+        {
+            bool success = false;
+            decimal totAmt = 0, totBal = 0;
+            int lrow = 0, lrow2 = 0;
+            XLWorkbook workbook = new XLWorkbook(fpath);
+
+            IXLWorksheet ws = workbook.Worksheet(sheetname);
+
+            try
+            {
+                #region WRITE DETAILS
+                foreach (DataGridViewRow r in dataGrid.Rows)
+                {
+                    //Look for unmatched statements
+                    if (Convert.ToBoolean(r.Cells["chbIsMatch"].Value) == ismatched)
+                    {
+                        //Write data to column B
+                        //ws.Cell($"B{startrow}").Value = r.Cells["ReferenceNo"].Value.ToString();
+                        ws.Cell($"B{startrow}").Value = r.Cells[dataGrid.Columns[1].HeaderText].Value.ToString();
+                        //Write data to column C
+                        ws.Cell($"C{startrow}").Value = r.Cells[dataGrid.Columns[2].HeaderText].Value.ToString();
+                        //Write data to column D
+                        ws.Cell($"D{startrow}").Value = r.Cells[dataGrid.Columns[3].HeaderText].Value.ToString();
+                        //Write data to column E
+                        ws.Cell($"E{startrow}").Value = r.Cells[dataGrid.Columns[4].HeaderText].Value.ToString().Replace(",", "");
+                        ws.Cell($"E{startrow}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+                        totAmt = totAmt + Convert.ToDecimal(r.Cells[dataGrid.Columns[4].HeaderText].Value.ToString().Replace(",", ""));
+
+                        ws.Cell($"F{startrow}").Value = r.Cells[dataGrid.Columns[5].HeaderText].Value.ToString().Replace(",", "");
+
+                        startrow += 1;
+                    }
+                }
+                #endregion
+
+                #region STYLE REPORT
+                //Styling
+                lrow = ws.LastRowUsed().RowNumber();
+                ws.Cell($"E{lrow + 1}").Value = totAmt.ToString();
+                ws.Cell($"E{lrow + 1}").Style.Font.Bold = true;
+                ws.Cell($"E{lrow + 1}").Style.NumberFormat.Format = "#,##0.00;[Red](#,##0.00)";
+
+
+                int newRow = lrow + 1;
+                ws.Range($"B{newRow}:F{newRow}").Style.Border.TopBorder = XLBorderStyleValues.Thin;
+
+                lrow2 = ws.LastRowUsed().RowNumber();
+
+                IXLRange range = ws.Range(ws.Cell($"B{startrow}").Address, ws.Cell($"F{lrow2}").Address);
+
+                range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                ws.Columns().AdjustToContents();
+                #endregion
+
+                workbook.SaveAs(fpath);
+                success = true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return success;
+        }
     }
 
 }

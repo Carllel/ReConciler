@@ -12,6 +12,7 @@ namespace ReConciler.Model
         public string DocumentDate { get; set; }
         public string DocumentType { get; set; }
         public string Amount { get; set; }
+        public string Location { get; set; }
     }
 
     public class validateVendorSTMT
@@ -19,5 +20,6 @@ namespace ReConciler.Model
         public string RefNo { get; set; }
         public string DocDate { get; set; }
         public string Amt { get; set; }
+        public string Location { get; set; }
     }
 }

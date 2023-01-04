@@ -19,6 +19,9 @@ namespace ReConciler
         {
             InitializeComponent();
 
+            //Load version
+            tssVersion.Text = "Version | " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            tssVersion.ForeColor = Color.Maroon;
         }
 
         private void Statement_FormClosed(object sender, FormClosedEventArgs e)

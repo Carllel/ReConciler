@@ -46,20 +46,20 @@ namespace ReConciler
             this.metroSetControlBox1 = new MetroSet_UI.Controls.MetroSetControlBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.msBtnBrowse = new MetroSet_UI.Controls.MetroSetButton();
-            this.axAcroPDF1 = new AxAcroPDFLib.AxAcroPDF();
+            //this.axAcroPDF1 = new AxAcroPDFLib.AxAcroPDF();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.button1 = new System.Windows.Forms.Button();
             this.metroPanel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).BeginInit();
             this.SuspendLayout();
             // 
             // metroPanel2
             // 
             this.metroPanel2.Controls.Add(this.webBrowser1);
-            this.metroPanel2.Controls.Add(this.axAcroPDF1);
+            //this.metroPanel2.Controls.Add(this.axAcroPDF1);
             this.metroPanel2.HorizontalScrollbarBarColor = true;
             this.metroPanel2.HorizontalScrollbarHighlightOnWheel = false;
             this.metroPanel2.HorizontalScrollbarSize = 10;
@@ -346,13 +346,13 @@ namespace ReConciler
             // 
             // axAcroPDF1
             // 
-            this.axAcroPDF1.Enabled = true;
-            this.axAcroPDF1.Location = new System.Drawing.Point(0, 0);
-            this.axAcroPDF1.Name = "axAcroPDF1";
-            this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
-            this.axAcroPDF1.Size = new System.Drawing.Size(1224, 400);
-            this.axAcroPDF1.TabIndex = 2;
-            this.axAcroPDF1.Enter += new System.EventHandler(this.axAcroPDF1_Enter);
+            //this.axAcroPDF1.Enabled = true;
+            //this.axAcroPDF1.Location = new System.Drawing.Point(0, 0);
+            //this.axAcroPDF1.Name = "axAcroPDF1";
+            //this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
+            //this.axAcroPDF1.Size = new System.Drawing.Size(1224, 400);
+            //this.axAcroPDF1.TabIndex = 2;
+            //this.axAcroPDF1.Enter += new System.EventHandler(this.axAcroPDF1_Enter);
             // 
             // webBrowser1
             // 
@@ -393,7 +393,7 @@ namespace ReConciler
             this.groupBox2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -411,7 +411,7 @@ namespace ReConciler
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private MetroSet_UI.Controls.MetroSetDivider metroSetDivider1;
         private MetroSet_UI.Controls.MetroSetControlBox metroSetControlBox1;
-        private AxAcroPDFLib.AxAcroPDF axAcroPDF1;
+        //private AxAcroPDFLib.AxAcroPDF axAcroPDF1;
         private System.Windows.Forms.Button button1;
         private MetroSet_UI.Controls.MetroSetTextBox txtFolderLoc;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;

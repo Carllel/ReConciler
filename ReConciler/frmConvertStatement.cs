@@ -68,67 +68,67 @@ namespace ReConciler
 
         private async void btnConvert_Click(object sender, EventArgs e)
         {
-            (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion in progress...";
-            (Application.OpenForms["Main"] as Main).pbLoader.Visible=true;
-            btnConvert.Enabled = false;
-            string parentFolder = Path.GetDirectoryName(txtStmtFileLoc.Text);
-            string savePath = parentFolder + @"\xslxconverted\";
-            txtFolderLoc.Text = savePath;
-            string xlxsFileName = Path.GetFileName(txtStmtFileLoc.Text).Replace("pdf", "xlsx").Replace("PDF", "xlsx");
-            if (!Directory.Exists(savePath))
-            {
-                Directory.CreateDirectory(savePath);
-            }
-            if (File.Exists((savePath + xlxsFileName)))
-            {
-                File.Delete((savePath + xlxsFileName));
-            }
-            try
-            {
-                //PDF2Excel.Initialize("");
-                //PDF2Excel.Format format = PDF2Excel.Format.DSV;
-                //format = PDF2Excel.Format.MSExcel2007;//convert to xlxs
-                //PDF2Excel.Document doc = new PDF2Excel.Document(txtStmtFileLoc.Text, "", "");
-                //doc.Convert((savePath + xlxsFileName), format, "");
-                //doc.Close();
-                //PDF2Excel.UnInitialize();
-                await Task.Run(() => {
-                    PDF2Excel.Initialize("");
-                    PDF2Excel.Format format = PDF2Excel.Format.DSV;
-                    format = PDF2Excel.Format.MSExcel2007;//convert to xlxs
+            //(Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion in progress...";
+            ////(Application.OpenForms["Main"] as Main).pbLoader.Visible=true;
+            //btnConvert.Enabled = false;
+            //string parentFolder = Path.GetDirectoryName(txtStmtFileLoc.Text);
+            //string savePath = parentFolder + @"\xslxconverted\";
+            //txtFolderLoc.Text = savePath;
+            //string xlxsFileName = Path.GetFileName(txtStmtFileLoc.Text).Replace("pdf", "xlsx").Replace("PDF", "xlsx");
+            //if (!Directory.Exists(savePath))
+            //{
+            //    Directory.CreateDirectory(savePath);
+            //}
+            //if (File.Exists((savePath + xlxsFileName)))
+            //{
+            //    File.Delete((savePath + xlxsFileName));
+            //}
+            //try
+            //{
+            //    //PDF2Excel.Initialize("");
+            //    //PDF2Excel.Format format = PDF2Excel.Format.DSV;
+            //    //format = PDF2Excel.Format.MSExcel2007;//convert to xlxs
+            //    //PDF2Excel.Document doc = new PDF2Excel.Document(txtStmtFileLoc.Text, "", "");
+            //    //doc.Convert((savePath + xlxsFileName), format, "");
+            //    //doc.Close();
+            //    //PDF2Excel.UnInitialize();
+            //    await Task.Run(() => {
+            //        PDF2Excel.Initialize("");
+            //        PDF2Excel.Format format = PDF2Excel.Format.DSV;
+            //        format = PDF2Excel.Format.MSExcel2007;//convert to xlxs
 
-                    PDF2Excel.Document doc = new PDF2Excel.Document(txtStmtFileLoc.Text, "", "");
-                    doc.Convert((savePath + xlxsFileName), format, "");
-                    doc.Close();
-                    PDF2Excel.UnInitialize();
+            //        PDF2Excel.Document doc = new PDF2Excel.Document(txtStmtFileLoc.Text, "", "");
+            //        doc.Convert((savePath + xlxsFileName), format, "");
+            //        doc.Close();
+            //        PDF2Excel.UnInitialize();
 
-                });
-                (Application.OpenForms["Main"] as Main).pbLoader.Visible = false;
-                (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion complete";
-                MetroSetMessageBox.Show(this, "Conversion to excel successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (PCS.Exception exception)
-            {
-                (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion error";
-                MetroSetMessageBox.Show(this, $"{exception.GetErrorCode().ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //MessageBox.Show(exception.GetErrorCode().ToString(), "Error");
-            }
-            catch (System.Exception exception)
-            {
-                (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion error";
-                MetroSetMessageBox.Show(this, $"{exception.ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //MessageBox.Show(exception.ToString(), "Error");
-            }
+            //    });
+            //    //(Application.OpenForms["Main"] as Main).pbLoader.Visible = false;
+            //    (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion complete";
+            //    MetroSetMessageBox.Show(this, "Conversion to excel successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
+            //catch (PCS.Exception exception)
+            //{
+            //    (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion error";
+            //    MetroSetMessageBox.Show(this, $"{exception.GetErrorCode().ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    //MessageBox.Show(exception.GetErrorCode().ToString(), "Error");
+            //}
+            //catch (System.Exception exception)
+            //{
+            //    (Application.OpenForms["Main"] as Main).slblStatus.Text = "PDF conversion error";
+            //    MetroSetMessageBox.Show(this, $"{exception.ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    //MessageBox.Show(exception.ToString(), "Error");
+            //}
 
-            btnConvert.Enabled = true;
-            (Application.OpenForms["Main"] as Main).pbLoader.Visible = false;
+            //btnConvert.Enabled = true;
+            //(Application.OpenForms["Main"] as Main).pbLoader.Visible = false;
 
         }
 
         private void frmConvertStatement_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.axAcroPDF1.Dispose();
-            this.axAcroPDF1 = null;
+            //this.axAcroPDF1.Dispose();
+            //this.axAcroPDF1 = null;
         }
 
         private void axAcroPDF1_Enter(object sender, EventArgs e)

@@ -1,89 +1,78 @@
 [
- {
-   "Id": "CARIBPRODUCER",
-   "Name": "Caribbean Producers (Jamaica) Limited"
- },
- {
-   "Id": "CONSOLBAKERIES",
-   "Name": "Consolidated Bakeries (JA) Ltd."
- }
- ,
- {
-   "Id": "CONTBAKING",
-   "Name": "Continental Baking Company Ltd (Dist)"
- }
- ,
- {
-   "Id": "LASCO",
-   "Name": "Lasco Distributors Ltd."
- }
- ,
- {
-   "Id": "RAINFOREST",
-   "Name": "Rainforest Seafoods Ltd."
- }
- ,
- {
-   "Id": "WISYNCO",
-   "Name": "Wisynco Group Limited"
- }
- ,
- {
-   "Id": "MASSY",
-   "Name": "Massy Distribution"
- }
-  ,
- {
-   "Id": "CONSBRANDS",
-   "Name": "Consumer Brands"
- }
-   ,
- {
-   "Id": "FACEYPHARMACY",
-   "Name": "Facey Pharmacy"
- }
-    ,
- {
-   "Id": "CARIMED",
-   "Name": "Cari-Med Ltd."
- }
-     ,
- {
-   "Id": "FACEY",
-   "Name": "Facey Commodity Company Limited"
- }
-      ,
- {
-   "Id": "DERRIMON",
-   "Name": "Derrimon Trading Ltd."
- }
-       ,
- {
-   "Id": "BESTDRESSED",
-   "Name": "Best Dressed Chicken"
- }
-        ,
- {
-   "Id": "COPPERWOOD",
-   "Name": "Copperwood"
- }
-         ,
- {
-   "Id": "TGEDDES",
-   "Name": "T. Geddes Grant"
- }
-          ,
- {
-   "Id": "CHASERAMSON",
-   "Name": "Chas. E. Ramson Ltd."
- }
-           ,
- {
-   "Id": "CELBRANDS",
-   "Name": "Celebration Brands"
- },
-  {
-   "Id": "KIRK",
-   "Name": "Kirk Distributors"
- }
+	{
+		"Id": "CARIBPRODUCER",
+		"Name": "Caribbean Producers (Jamaica) Limited"
+	},
+	{
+		"Id": "CONSOLBAKERIES",
+		"Name": "Consolidated Bakeries (JA) Ltd."
+	},
+	{
+		"Id": "CONTBAKING",
+		"Name": "Continental Baking Company Ltd (Dist)"
+	},
+	{
+		"Id": "LASCO",
+		"Name": "Lasco Distributors Ltd."
+	},
+	{
+		"Id": "RAINFOREST",
+		"Name": "Rainforest Seafoods Ltd."
+	},
+	{
+		"Id": "WISYNCO",
+		"Name": "Wisynco Group Limited"
+	},
+	{
+		"Id": "MASSY",
+		"Name": "Massy Distribution"
+	},
+	{
+		"Id": "CONSBRANDS",
+		"Name": "Consumer Brands"
+	},
+	{
+		"Id": "FACEYPHARMACY",
+		"Name": "Facey Pharmacy"
+	},
+	{
+		"Id": "CARIMED",
+		"Name": "Cari-Med Ltd."
+	},
+	{
+		"Id": "FACEY",
+		"Name": "Facey Commodity Company Limited"
+	},
+	{
+		"Id": "DERRIMON",
+		"Name": "Derrimon Trading Ltd."
+	},
+	{
+		"Id": "BESTDRESSED",
+		"Name": "Best Dressed Chicken"
+	},
+	{
+		"Id": "COPPERWOOD",
+		"Name": "Copperwood"
+	},
+	{
+		"Id": "TGEDDES",
+		"Name": "T. Geddes Grant"
+	},
+	{
+		"Id": "CHASERAMSON",
+		"Name": "Chas. E. Ramson Ltd."
+	},
+	{
+		"Id": "CELBRANDS",
+		"Name": "Celebration Brands"
+	},
+	{
+		"Id": "KIRK",
+		"Name": "Kirk Distributors"
+	},
+	{
+		"Id": "JAMBISCO",
+		"Name": "The Jamaica Biscuit Company Ltd."
+	}
 ]

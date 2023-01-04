@@ -39,10 +39,10 @@ namespace ReConciler
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.slblStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.pbLoader = new System.Windows.Forms.PictureBox();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tssVersion = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoader)).BeginInit();
             this.SuspendLayout();
             // 
             // metroSetControlBox1
@@ -53,7 +53,7 @@ namespace ReConciler
             this.metroSetControlBox1.CloseNormalForeColor = System.Drawing.Color.Gray;
             this.metroSetControlBox1.DisabledForeColor = System.Drawing.Color.DimGray;
             this.metroSetControlBox1.IsDerivedStyle = true;
-            this.metroSetControlBox1.Location = new System.Drawing.Point(1379, 11);
+            this.metroSetControlBox1.Location = new System.Drawing.Point(1373, 11);
             this.metroSetControlBox1.MaximizeBox = true;
             this.metroSetControlBox1.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
             this.metroSetControlBox1.MaximizeHoverForeColor = System.Drawing.Color.Gray;
@@ -117,7 +117,9 @@ namespace ReConciler
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
-            this.slblStatus});
+            this.slblStatus,
+            this.toolStripStatusLabel3,
+            this.tssVersion});
             this.statusStrip1.Location = new System.Drawing.Point(12, 723);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1453, 22);
@@ -144,16 +146,19 @@ namespace ReConciler
             this.slblStatus.Name = "slblStatus";
             this.slblStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // pbLoader
+            // toolStripStatusLabel3
             // 
-            this.pbLoader.Image = global::ReConciler.Properties.Resources.loadersr;
-            this.pbLoader.Location = new System.Drawing.Point(1273, 725);
-            this.pbLoader.Name = "pbLoader";
-            this.pbLoader.Size = new System.Drawing.Size(169, 20);
-            this.pbLoader.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbLoader.TabIndex = 8;
-            this.pbLoader.TabStop = false;
-            this.pbLoader.Visible = false;
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(1355, 17);
+            this.toolStripStatusLabel3.Spring = true;
+            // 
+            // tssVersion
+            // 
+            this.tssVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.tssVersion.ForeColor = System.Drawing.Color.Maroon;
+            this.tssVersion.Name = "tssVersion";
+            this.tssVersion.Size = new System.Drawing.Size(24, 17);
+            this.tssVersion.Text = "1.0";
             // 
             // Main
             // 
@@ -161,20 +166,20 @@ namespace ReConciler
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1477, 757);
-            this.Controls.Add(this.pbLoader);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.metroSetControlBox1);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Recon Optimizer";
+            this.Text = "ReConciler";
             this.Load += new System.EventHandler(this.Main_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLoader)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,8 +195,9 @@ namespace ReConciler
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         public System.Windows.Forms.ToolStripStatusLabel slblStatus;
         private System.Windows.Forms.ToolStripButton toolStripBtnConvert;
-        public System.Windows.Forms.PictureBox pbLoader;
         private System.Windows.Forms.ToolStripButton toolStripBtnMerge;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel tssVersion;
     }
 }
 
